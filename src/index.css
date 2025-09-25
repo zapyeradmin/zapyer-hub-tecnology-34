@@ -73,6 +73,68 @@
   @apply bg-gradient-to-r from-primary to-[#22c55e] hover:opacity-90 transition-opacity rounded-full;
 }
 
+/* Article Content Styles */
+.article-content {
+  line-height: 1.8;
+  letter-spacing: 0.025em;
+}
+
+.article-content p {
+  text-align: justify;
+  margin-bottom: 1.5rem;
+  hyphens: auto;
+  word-break: break-word;
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+.article-content ul,
+.article-content ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+  text-align: justify;
+}
+
+.article-content blockquote {
+  border-left: 4px solid hsl(var(--primary));
+  padding-left: 1rem;
+  margin: 2rem 0;
+  font-style: italic;
+  background: hsl(var(--primary) / 0.05);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.article-content img {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+}
+
+.article-content a {
+  color: hsl(var(--primary));
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.article-content a:hover {
+  color: hsl(var(--primary) / 0.8);
+  text-decoration: underline;
+}
+
 @keyframes accordion-down {
   from {
     height: 0;
