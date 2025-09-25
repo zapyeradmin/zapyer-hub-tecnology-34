@@ -87,18 +87,19 @@ const NewsDetail = () => {
 
         {/* Article */}
         <article className="container mx-auto px-4 max-w-4xl">
-          {/* Featured Image */}
-          <div className="aspect-video rounded-lg overflow-hidden mb-8">
-            <img 
-              src={news.featuredImage} 
-              alt={news.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
           {/* Article Header */}
-          <header className="mb-8 bg-gradient-to-r from-primary/5 to-transparent p-6 rounded-xl border border-primary/10">
-            <div className="flex items-center gap-4 mb-4 flex-wrap">
+          <header className="mb-8">
+            {/* Title and Subtitle */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              {news.title}
+            </h1>
+
+            <p className="text-lg text-muted-foreground mb-6">
+              {news.excerpt}
+            </p>
+
+            {/* Category, Date and Reading Time */}
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
               <Badge className="capitalize bg-primary text-white hover:bg-primary/90">
                 {news.category}
               </Badge>
@@ -112,16 +113,8 @@ const NewsDetail = () => {
               </div>
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              {news.title}
-            </h1>
-
-            <p className="text-lg text-muted-foreground mb-6">
-              {news.excerpt}
-            </p>
-
             {/* Author and Share */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-primary/20">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
               <div className="flex items-center gap-3">
                 <img 
                   src={news.author.avatar} 
@@ -175,9 +168,18 @@ const NewsDetail = () => {
             </div>
           </header>
 
+          {/* Featured Image */}
+          <div className="aspect-video rounded-lg overflow-hidden mb-8">
+            <img 
+              src={news.featuredImage} 
+              alt={news.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
           {/* Article Content */}
           <div 
-            className="article-content prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground/90 prose-strong:text-foreground prose-ul:text-foreground/90 prose-ol:text-foreground/90 prose-li:text-foreground/90 prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+            className="article-content prose prose-lg max-w-none prose-headings:text-white prose-p:text-white prose-strong:text-white prose-ul:text-white prose-ol:text-white prose-li:text-white prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
             dangerouslySetInnerHTML={{ __html: news.content }}
           />
 
