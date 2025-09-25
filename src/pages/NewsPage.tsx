@@ -45,13 +45,13 @@ const NewsPage = () => {
       
       <main className="pt-20">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary/10 to-primary/5 py-16">
+        <div className="bg-background py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Notícias do Mercado Cripto
+            <h1 className="text-4xl md:text-5xl mb-4">
+              Fique atualizado com <span className="font-bold text-primary">Zapyer Notícias</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Fique por dentro das últimas novidades, análises e tendências do mundo das criptomoedas
+              Fique por dentro das últimas novidades, sobre Tecnologia, Automações, Mercados e as Últimas Tendências do Mundo das Inteligências Artificias
             </p>
           </div>
         </div>
@@ -60,7 +60,7 @@ const NewsPage = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary w-4 h-4" />
               <Input
                 placeholder="Buscar notícias..."
                 value={searchTerm}
@@ -72,7 +72,7 @@ const NewsPage = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
-                  <Filter className="w-4 h-4" />
+                  <Filter className="w-4 h-4 text-primary" />
                   {selectedCategory ? selectedCategory : "Categoria"}
                 </Button>
               </DropdownMenuTrigger>
