@@ -176,6 +176,14 @@ export interface BlogPost {
 }
 
 /**
+ * News article structure - extends BlogPost with additional fields
+ */
+export interface NewsArticle extends BlogPost {
+  slug: string;
+  category: string;
+}
+
+/**
  * Blog author information
  */
 export interface Author {

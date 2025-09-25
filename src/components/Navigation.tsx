@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import zapyerLogo from "../assets/zapyer-hub-logo.png";
@@ -44,6 +45,7 @@ const Navigation = () => {
     { name: "Recursos", href: "#features", onClick: () => scrollToSection('features') },
     { name: "Preços", href: "#pricing", onClick: () => scrollToSection('pricing') },
     { name: "Depoimentos", href: "#testimonials", onClick: () => scrollToSection('testimonials') },
+    { name: "Notícias", href: "/noticias", external: true },
   ];
 
   return (
@@ -63,19 +65,29 @@ const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (item.onClick) {
-                    item.onClick();
-                  }
-                }}
-                className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
-              >
-                {item.name}
-              </a>
+              item.external ? (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (item.onClick) {
+                      item.onClick();
+                    }
+                  }}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
+                >
+                  {item.name}
+                </a>
+              )
             ))}
             <Button 
               onClick={() => scrollToSection('cta')}
@@ -97,20 +109,31 @@ const Navigation = () => {
               <SheetContent className="bg-[#1B1B1B]">
                 <div className="flex flex-col gap-4 mt-8">
                   {navItems.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="text-lg text-muted-foreground hover:text-foreground transition-colors"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsMobileMenuOpen(false);
-                        if (item.onClick) {
-                          item.onClick();
-                        }
-                      }}
-                    >
-                      {item.name}
-                    </a>
+                    item.external ? (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="text-lg text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    ) : (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="text-lg text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsMobileMenuOpen(false);
+                          if (item.onClick) {
+                            item.onClick();
+                          }
+                        }}
+                      >
+                        {item.name}
+                      </a>
+                    )
                   ))}
                   <Button 
                     onClick={() => {

@@ -32,7 +32,7 @@ import Footer from "@/components/Footer";
 import { CryptoTradingChat } from "@/components/CryptoTradingChat";
 import { VideoPlayer } from "@/components/ui/video-thumbnail-player";
 import FAQSection from "@/components/FAQSection";
-import { Blog } from "@/components/ui/blog-section";
+import { NewsSection } from "@/components/news/NewsSection";
 import { Timeline } from "@/components/ui/timeline";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import type { TimelineItem } from "@/types";
@@ -226,9 +226,9 @@ const Index = (): JSX.Element => {
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* News Section */}
       <div className="bg-background">
-        <Blog />
+        <NewsSection />
       </div>
 
       {/* Timeline Section - Dark Mode */}
