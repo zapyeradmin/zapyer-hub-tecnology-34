@@ -12,6 +12,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import Clients from "./pages/admin/Clients";
 import Deals from "./pages/admin/Deals";
 import Tasks from "./pages/admin/Tasks";
+import News from "./pages/admin/News";
+import Integrations from "./pages/admin/Integrations";
+import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -32,9 +35,9 @@ const App = () => (
               <Route path="clients" element={<Clients />} />
               <Route path="deals" element={<Deals />} />
               <Route path="tasks" element={<Tasks />} />
-              <Route path="news" element={<div>Notícias Admin - Em desenvolvimento</div>} />
-              <Route path="integrations" element={<div>Integrações - Em desenvolvimento</div>} />
-              <Route path="settings" element={<div>Configurações - Em desenvolvimento</div>} />
+              <Route path="news" element={<News />} />
+              <Route path="integrations" element={<Integrations />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
         </BrowserRouter>
