@@ -50,19 +50,17 @@ const AdminSidebar = () => {
   };
 
   return (
-    <Sidebar className={`transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
-      <SidebarContent className="flex flex-col h-full bg-card border-r">
+    <Sidebar className={`transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'} shadow-xl`}>
+      <SidebarContent className="flex flex-col h-full bg-gradient-to-b from-card via-card/95 to-card/90 border-r border-primary/20 backdrop-blur-xl">
         {/* Logo */}
-        <div className="p-4 border-b">
+        <div className="p-4 border-b bg-gradient-to-r from-primary/10 to-primary/5">
           <div className="flex items-center gap-3">
-            <img 
-              src={zapyerLogo} 
-              alt="Zapyer Hub" 
-              className="h-8 w-auto flex-shrink-0"
-            />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">A</span>
+            </div>
             {!collapsed && (
-              <h1 className="font-bold text-lg text-foreground">
-                Zapyer Hub
+              <h1 className="font-bold text-lg bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                Admin
               </h1>
             )}
           </div>
@@ -77,10 +75,10 @@ const AdminSidebar = () => {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.href}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                      className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                         isActive(item.href)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                          ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-lg shadow-primary/25 scale-105'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:scale-105'
                       }`}
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -142,26 +140,32 @@ const AdminLayout = () => {
         
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <header className="h-16 bg-card border-b flex items-center px-6 gap-4">
-            <SidebarTrigger className="md:hidden">
+          <header className="h-16 bg-gradient-to-r from-card/95 via-card to-card/95 border-b border-primary/20 flex items-center px-6 gap-4 backdrop-blur-xl shadow-sm">
+            <SidebarTrigger className="md:hidden p-2 rounded-lg hover:bg-primary/10 transition-colors">
               <Menu className="h-5 w-5" />
             </SidebarTrigger>
             
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-foreground">
+              <h2 className="text-xl font-semibold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
                 Painel Administrativo
               </h2>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                {user.email}
-              </span>
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg">
+                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-muted-foreground">Online</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg">
+                <span className="text-sm text-muted-foreground">
+                  {user.email}
+                </span>
+              </div>
             </div>
           </header>
 
           {/* Content */}
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-auto p-6 bg-gradient-to-br from-background via-background/98 to-background/95">
             <Outlet />
           </div>
         </main>

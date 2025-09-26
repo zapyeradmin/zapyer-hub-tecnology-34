@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Clock, CheckCircle, AlertTriangle, Calendar as CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { GoogleCalendarIntegration } from '@/components/tasks/GoogleCalendarIntegration';
 
 // Configure moment locale
 moment.locale('pt-br');
@@ -198,129 +199,167 @@ const Tasks = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Tarefas</h1>
-          <p className="text-muted-foreground">
-            Gerencie suas tarefas e compromissos
-          </p>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-xl -z-10"></div>
+        <div className="p-6 rounded-xl">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-2">
+                Tarefas
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Gerencie suas tarefas e compromissos
+              </p>
+            </div>
+            
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-primary to-primary/90 hover:opacity-90 shadow-lg">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nova Tarefa
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20">
+                <DialogHeader>
+                  <DialogTitle className="text-xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                    Nova Tarefa
+                  </DialogTitle>
+                  <DialogDescription>
+                    Crie uma nova tarefa ou lembrete.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Título *</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Título da tarefa"
+                        required
+                        className="bg-background/50 border-primary/20"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Descrição</Label>
+                      <Textarea
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Descrição da tarefa..."
+                        rows={3}
+                        className="bg-background/50 border-primary/20"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="due_date">Data de Vencimento</Label>
+                      <Input
+                        id="due_date"
+                        type="datetime-local"
+                        value={formData.due_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
+                        className="bg-background/50 border-primary/20"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="priority">Prioridade</Label>
+                        <Select value={formData.priority} onValueChange={(value: any) => setFormData(prev => ({ ...prev, priority: value }))}>
+                          <SelectTrigger className="bg-background/50 border-primary/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Baixa</SelectItem>
+                            <SelectItem value="medium">Média</SelectItem>
+                            <SelectItem value="high">Alta</SelectItem>
+                            <SelectItem value="urgent">Urgente</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select value={formData.status} onValueChange={(value: any) => setFormData(prev => ({ ...prev, status: value }))}>
+                          <SelectTrigger className="bg-background/50 border-primary/20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                            <SelectItem value="in_progress">Em Progresso</SelectItem>
+                            <SelectItem value="completed">Concluída</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" className="bg-gradient-to-r from-primary to-primary/90 hover:opacity-90">
+                      Criar Tarefa
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-        
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Nova Tarefa
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Nova Tarefa</DialogTitle>
-              <DialogDescription>
-                Crie uma nova tarefa ou lembrete.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Título da tarefa"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descrição</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Descrição da tarefa..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="due_date">Data de Vencimento</Label>
-                  <Input
-                    id="due_date"
-                    type="datetime-local"
-                    value={formData.due_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="priority">Prioridade</Label>
-                    <Select value={formData.priority} onValueChange={(value: any) => setFormData(prev => ({ ...prev, priority: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Baixa</SelectItem>
-                        <SelectItem value="medium">Média</SelectItem>
-                        <SelectItem value="high">Alta</SelectItem>
-                        <SelectItem value="urgent">Urgente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select value={formData.status} onValueChange={(value: any) => setFormData(prev => ({ ...prev, status: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pendente</SelectItem>
-                        <SelectItem value="in_progress">Em Progresso</SelectItem>
-                        <SelectItem value="completed">Concluída</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Criar Tarefa</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
+
+      {/* Google Calendar Integration */}
+      <GoogleCalendarIntegration onSync={fetchTasks} />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-gray-500/20 to-gray-500/10">
+                <Clock className="h-4 w-4 text-gray-400" />
+              </div>
+              Pendentes
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{tasksByStatus.pending.length}</div>
+            <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              {tasksByStatus.pending.length}
+            </div>
             <p className="text-xs text-muted-foreground">tarefas aguardando</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Em Progresso</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-500/10">
+                <Clock className="h-4 w-4 text-blue-400" />
+              </div>
+              Em Progresso
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{tasksByStatus.in_progress.length}</div>
+            <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              {tasksByStatus.in_progress.length}
+            </div>
             <p className="text-xs text-muted-foreground">tarefas em andamento</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Concluídas</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/20 to-green-500/10">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+              </div>
+              Concluídas
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{tasksByStatus.completed.length}</div>
+            <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              {tasksByStatus.completed.length}
+            </div>
             <p className="text-xs text-muted-foreground">tarefas finalizadas</p>
           </CardContent>
         </Card>
@@ -335,18 +374,26 @@ const Tasks = () => {
 
         <TabsContent value="list" className="space-y-4">
           {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
-            <Card key={status}>
+            <Card key={status} className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 capitalize">
-                  {getStatusIcon(status)}
+                <CardTitle className="flex items-center gap-2 capitalize text-lg">
+                  <div className={`p-2 rounded-lg ${
+                    status === 'pending' ? 'bg-gradient-to-br from-gray-500/20 to-gray-500/10' :
+                    status === 'in_progress' ? 'bg-gradient-to-br from-blue-500/20 to-blue-500/10' : 
+                    'bg-gradient-to-br from-green-500/20 to-green-500/10'
+                  }`}>
+                    {getStatusIcon(status)}
+                  </div>
                   {status === 'pending' ? 'Pendentes' : 
                    status === 'in_progress' ? 'Em Progresso' : 'Concluídas'}
-                  <Badge variant="secondary">{statusTasks.length}</Badge>
+                  <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+                    {statusTasks.length}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {statusTasks.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
+                  <p className="text-muted-foreground text-center py-8">
                     Nenhuma tarefa {status === 'pending' ? 'pendente' : 
                                    status === 'in_progress' ? 'em progresso' : 'concluída'}
                   </p>
@@ -355,7 +402,7 @@ const Tasks = () => {
                     {statusTasks.map((task) => (
                       <div
                         key={task.id}
-                        className="flex items-start justify-between p-3 bg-muted/50 rounded-lg"
+                        className="flex items-start justify-between p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-lg border border-primary/10 hover:border-primary/20 transition-all duration-200 hover:shadow-md"
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
@@ -389,6 +436,7 @@ const Tasks = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => updateTaskStatus(task.id, 'in_progress')}
+                              className="border-primary/30 hover:bg-primary/10"
                             >
                               Iniciar
                             </Button>
@@ -397,6 +445,7 @@ const Tasks = () => {
                             <Button
                               size="sm"
                               onClick={() => updateTaskStatus(task.id, 'completed')}
+                              className="bg-gradient-to-r from-primary to-primary/90 hover:opacity-90"
                             >
                               Concluir
                             </Button>
@@ -412,9 +461,14 @@ const Tasks = () => {
         </TabsContent>
 
         <TabsContent value="calendar">
-          <Card>
+          <Card className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg">
             <CardHeader>
-              <CardTitle>Calendário de Tarefas</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+                  <CalendarIcon className="h-5 w-5 text-primary" />
+                </div>
+                Calendário de Tarefas
+              </CardTitle>
               <CardDescription>
                 Visualize suas tarefas organizadas por data
               </CardDescription>
@@ -447,6 +501,9 @@ const Tasks = () => {
                       backgroundColor: 'hsl(var(--primary))',
                       borderColor: 'hsl(var(--primary))',
                       color: 'hsl(var(--primary-foreground))',
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     },
                   })}
                 />

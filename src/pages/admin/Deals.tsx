@@ -6,9 +6,11 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, DollarSign, Calendar, User } from 'lucide-react';
+import { Plus, DollarSign, Calendar, User, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { NewDealDialog } from '@/components/deals/NewDealDialog';
+import { PipelineManager } from '@/components/deals/PipelineManager';
 
 interface Deal {
   id: string;
@@ -125,6 +127,13 @@ const Deals = () => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [newDealOpen, setNewDealOpen] = useState(false);
+  const [pipelineStages, setPipelineStages] = useState([
+    { id: 'lead', name: 'Leads', color: 'bg-blue-500/10 border-blue-500/20', order: 0 },
+    { id: 'proposal', name: 'Propostas', color: 'bg-yellow-500/10 border-yellow-500/20', order: 1 },
+    { id: 'negotiation', name: 'Negociação', color: 'bg-orange-500/10 border-orange-500/20', order: 2 },
+    { id: 'closed_won', name: 'Fechados', color: 'bg-green-500/10 border-green-500/20', order: 3 },
+  ]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -217,34 +226,60 @@ const Deals = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Pipeline de Negócios</h1>
-          <p className="text-muted-foreground">
-            Gerencie seu funil de vendas com drag & drop
-          </p>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-xl -z-10"></div>
+        <div className="p-6 rounded-xl">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-2">
+                Pipeline de Negócios
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Gerencie seu funil de vendas com drag & drop
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <PipelineManager 
+                stages={pipelineStages} 
+                onStagesUpdate={setPipelineStages} 
+              />
+              <Button 
+                onClick={() => setNewDealOpen(true)}
+                className="bg-gradient-to-r from-primary to-primary/90 hover:opacity-90 shadow-lg"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Novo Negócio
+              </Button>
+            </div>
+          </div>
         </div>
-        
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Negócio
-        </Button>
       </div>
 
       {/* Pipeline Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {Object.entries(stageLabels).map(([stage, label]) => {
-          const stageDeals = getDealsForStage(stage);
+        {pipelineStages.map((stage) => {
+          const stageDeals = getDealsForStage(stage.id);
           const totalValue = stageDeals.reduce((sum, deal) => sum + (deal.value || 0), 0);
           
           return (
-            <Card key={stage}>
+            <Card key={stage.id} className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">{label}</CardTitle>
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: stage.color.includes('blue') ? '#3b82f6' : 
+                             stage.color.includes('yellow') ? '#eab308' :
+                             stage.color.includes('orange') ? '#f97316' : '#22c55e' }}
+                  ></div>
+                  {stage.name}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stageDeals.length}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                  {stageDeals.length}
+                </div>
+                <p className="text-sm text-primary font-medium">
                   R$ {totalValue.toLocaleString('pt-BR')}
                 </p>
               </CardContent>
@@ -256,12 +291,12 @@ const Deals = () => {
       {/* Kanban Board */}
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-6 overflow-x-auto pb-4">
-          {Object.entries(stageLabels).map(([stage, label]) => (
-            <div key={stage} className="flex-shrink-0 w-80">
+          {pipelineStages.map((stage) => (
+            <div key={stage.id} className="flex-shrink-0 w-80">
               <KanbanColumn
-                stage={stage}
-                deals={getDealsForStage(stage)}
-                title={label}
+                stage={stage.id}
+                deals={getDealsForStage(stage.id)}
+                title={stage.name}
               />
             </div>
           ))}
@@ -282,6 +317,12 @@ const Deals = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      <NewDealDialog 
+        open={newDealOpen}
+        onOpenChange={setNewDealOpen}
+        onSuccess={fetchDeals}
+      />
     </div>
   );
 };
